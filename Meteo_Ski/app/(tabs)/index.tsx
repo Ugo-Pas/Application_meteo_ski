@@ -1,27 +1,21 @@
 import { ImageBackground } from 'expo-image';
+import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { Alert, Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const logo = {
-  source: require('@/assets/images/velkoz.png'),
-  width: 64,
-  height: 64,
-};
-
-function showAlert(message: string) {
-    Alert.alert(message);
-}
 
 type CatProps = {
   name: string;
 };
 
 const Button_station= (props: CatProps) => {
-
+  const router = useRouter();
   return (
     <TouchableOpacity 
       style={styles.button}
-      onPress={() => showAlert(props.name)}
+      onPress={() => router.push({
+        pathname: '/(tabs)/station',
+        params: { name: props.name }
+      })}
     >
       <Text style={styles.buttonText}>{props.name}</Text>
     </TouchableOpacity>
@@ -32,16 +26,16 @@ const list_button = (): React.ReactNode => {
   return (
     <View>
       <View style={styles.buttonRow}>
-        <Button_station name='station1'/>
-        <Button_station name='station2'/>
+        <Button_station name='Val Thorens'/>
+        <Button_station name="Val d'Isère"/>
       </View>
       <View style={styles.buttonRow}>
-        <Button_station name='station3'/>
-        <Button_station name='station4'/>
+        <Button_station name='Les Arcs'/>
+        <Button_station name='Auron'/>
       </View>
       <View style={styles.buttonRow}>
-        <Button_station name='station5'/>
-        <Button_station name='station6'/>
+        <Button_station name='Isola'/>
+        <Button_station name="Allos"/>
       </View>
     </View>
   );
@@ -72,7 +66,6 @@ export default function HomeScreen() {
     return currentTime.toLocaleTimeString('fr-FR', { 
       hour: '2-digit', 
       minute: '2-digit', 
-      second: '2-digit' 
     });
   };
 
@@ -123,7 +116,6 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   container_button: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingTop: 50,
