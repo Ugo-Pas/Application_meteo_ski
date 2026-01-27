@@ -71,7 +71,7 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground 
-      source={require('@/assets/images/back.jpeg')}
+      source={require('@/assets/images/back.png')}
       contentFit="cover" 
       style={styles.image}>
         <Text style={styles.title}>Meteo Ski</Text>
