@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ImageBackground, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useLocalSearchParams } from 'expo-router';
@@ -25,7 +25,7 @@ const getWeather = async (location: string) => {
 };
 
 // Background image lives at project root /assets/images
-const backImage = require('../../assets/images/back_info.jpg');
+const backImage = require('../../assets/images/back.png');
 
 export default function StationScreen() {
   const { name } = useLocalSearchParams();
@@ -64,12 +64,12 @@ export default function StationScreen() {
         lightColor="transparent"
         darkColor="transparent"
         style={styles.container}>
-        <ThemedText type="title">{stationName}</ThemedText>
+        <ThemedText style={styles.titlestation} type="title">{stationName}</ThemedText>
         {data && data.city && (
           <>
-            <Text style={styles.text}>Ville : {data.city.name}</Text>
-            <Text>{Math.round(firstForecast?.main?.temp)}°C</Text>
-            <Text style={styles.text}>Météo : {firstForecast?.weather?.[0]?.description}</Text>
+          <Text style={styles.text}>Météo : {firstForecast?.weather?.[0]?.description}</Text>
+          <View style={styles.row}>
+            <Text style={styles.tmp}>{Math.round(firstForecast?.main?.temp)}°C</Text>
             {iconUrl && (
               <Image
                 source={{ uri: iconUrl }}
@@ -77,6 +77,10 @@ export default function StationScreen() {
                 accessibilityLabel={firstForecast?.weather?.[0]?.description || 'Icône météo'}
               />
             )}
+          </View>
+          <View>
+            <Text style={styles.text}> Vent : {firstForecast.wind.speed} KM/H</Text>
+          </View>
           </>
         )}
         {!data && <Text style={styles.text}>Aucune donnée disponible</Text>}
@@ -92,18 +96,47 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign : 'center',
+    gap: 15,
+    marginTop: 0,
+  },
   icon: {
-    width: 150,
-    height: 150,
-    marginTop: 12,
+    width: 170,
+    height: 170,
+    marginTop: 10,
+  },
+  tmp: {
+    fontSize: 35,
+    marginTop: 10,
+    fontWeight : 'bold',
+    textShadowColor: 'rgba(255, 255, 255, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   text: {
-    fontSize: 16,
-    marginTop: 20,
+    fontSize: 25,
+    marginTop: 10,
+        fontWeight: 'bold',
+    textShadowColor: 'rgba(255, 255, 255, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   image: {
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  titlestation: {
+    color: '#000000ff',
+    textShadowColor: 'rgba(255, 255, 255, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    fontSize: 50,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingVertical: 20,
   },
 });
