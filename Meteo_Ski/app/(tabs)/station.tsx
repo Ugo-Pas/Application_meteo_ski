@@ -1,12 +1,15 @@
+import 'dotenv/config';
 import { Switch, ActivityIndicator, Image, ImageBackground, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
 
+const API_KEY = process.env.API_KEY || '';
+
 const API = (namecity: string, units: string = 'metric', lang: string = 'fr') => {
   const city = encodeURIComponent(namecity);
-  return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=d8d2c196120384ee30b5ed0789101c5d&units=${units}&lang=${lang}`;
+  return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=${units}&lang=${lang}`;
 };
 
 const getWeather = async (location: string) => {
@@ -95,50 +98,52 @@ export default function StationScreen() {
       source={backImage}
       resizeMode="cover"
       style={styles.image}>
-      <ThemedView
-        lightColor="transparent"
-        darkColor="transparent"
-        style={styles.container}>
-        <Text style={styles.titlestation}>{stationName}</Text>
-        {data && data.city && (
-          <>
-          <Text style={styles.text}>Météo : {firstForecast?.weather?.[0]?.description}</Text>
-          <View style={styles.row}>
-            <Text style={styles.tmp}>{Math.round(firstForecast?.main?.temp)}°C</Text>
-            {iconUrl && (
-              <Image
-                source={{ uri: iconUrl }}
-                style={styles.icon}
-                accessibilityLabel={firstForecast?.weather?.[0]?.description || 'Icône météo'}
+      <ScrollView>
+        <ThemedView
+          lightColor="transparent"
+          darkColor="transparent"
+          style={styles.container}>
+          <Text style={styles.titlestation}>{stationName}</Text>
+          {data && data.city && (
+            <>
+            <Text style={styles.text}>Météo : {firstForecast?.weather?.[0]?.description}</Text>
+            <View style={styles.row}>
+              <Text style={styles.tmp}>{Math.round(firstForecast?.main?.temp)}°C</Text>
+              {iconUrl && (
+                <Image
+                  source={{ uri: iconUrl }}
+                  style={styles.icon}
+                  accessibilityLabel={firstForecast?.weather?.[0]?.description || 'Icône météo'}
+                />
+              )}
+            </View>
+            <View>
+              <Text style={styles.text}> Vent : {firstForecast.wind.speed} KM/H</Text>
+              <Text style={styles.text}> Direction : {getWindDirection(firstForecast.wind.deg)}</Text>
+            </View>
+            <View style={styles.switchRow}>
+              <Switch
+                trackColor={{false: '#767577', true: '#06327e'}}
+                thumbColor={isEnabled ? '#9f1cc0' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={isEnabled}
               />
-            )}
-          </View>
-          <View>
-            <Text style={styles.text}> Vent : {firstForecast.wind.speed} KM/H</Text>
-            <Text style={styles.text}> Direction : {getWindDirection(firstForecast.wind.deg)}</Text>
-          </View>
-          <View style={styles.switchRow}>
-            <Switch
-              trackColor={{false: '#767577', true: '#06327e'}}
-              thumbColor={isEnabled ? '#9f1cc0' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleSwitch}
-              value={isEnabled}
-            />
-            <Text style={styles.prevue}>Prevision jour avenir</Text>
-          </View>
-          {isEnabled && <View style={styles.prevueContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {PrevueDay(8)}
-            {PrevueDay(16)}
-            {PrevueDay(24)}
-            {PrevueDay(32)}
-          </ScrollView>
-            </View>}
-          </>
-        )}
-        {!data && <Text style={styles.text}>Aucune donnée disponible</Text>}
-      </ThemedView>
+              <Text style={styles.prevue}>Prevision jour à venir</Text>
+            </View>
+            {isEnabled && <View style={styles.prevueContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {PrevueDay(8)}
+              {PrevueDay(16)}
+              {PrevueDay(24)}
+              {PrevueDay(32)}
+            </ScrollView>
+              </View>}
+            </>
+          )}
+          {!data && <Text style={styles.text}>Aucune donnée disponible</Text>}
+        </ThemedView>
+      </ScrollView>
     </ImageBackground>
   );
 }
